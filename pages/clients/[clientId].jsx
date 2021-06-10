@@ -1,14 +1,18 @@
-import { useRouter } from 'next/router'
-import React from 'react'
+import Router, { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 import ClientForm from '../../components/ClientForm'
 
 const contratId = () => {
 
   const router = useRouter()
-  const { clientId } = router.query
+  const [clientId, setClientId] = useState(undefined)
+
+  useEffect(() => {
+    setClientId(router.query.clientId)
+  })
 
   return (
-    <ClientForm view id={clientId}/>
+    <ClientForm view id={clientId} />
   )
 }
 

@@ -4,20 +4,19 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import ContratsList from './ContratsList'
 
-const ClientForm = ({ view, add, edit, id }) => {
+const ClientForm = ({ view, add, id }) => {
 
   const { register, handleSubmit, setValue } = useForm()
 
   const [mode, setMode] = useState(view ? 'view' : add ? 'add' : 'edit')
   const [functions, setFunctions] = useState([])
 
-  const handleDelete = async () => {
-    await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteClient?id=${id}?projection=${process.env.NEXT_PUBLIC_CLIENT_PROJECTION}`)
-    alert(`Client with id ${id} deleted!`)
-    await Router.push('/clients')
-  }
-
   useEffect(async () => {
+
+    //  Redirect if invalid id
+    if (mode !== 'add' && !(/\d/g.test(id))) {
+      await Router.push('/clients')
+    }
 
     //  Fill form initial data
     if (mode !== 'add') {
@@ -46,6 +45,12 @@ const ClientForm = ({ view, add, edit, id }) => {
 
   }, [mode])
 
+  const handleDelete = async () => {
+    await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteClient?id=${id}`)
+    alert(`Client with id ${id} deleted!`)
+    await Router.push('/clients')
+  }
+
   const onSubmit = async data => {
     //  Format Client object to send
     const client = {
@@ -69,7 +74,7 @@ const ClientForm = ({ view, add, edit, id }) => {
       client.id = id
       console.log({client})
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/editClient?projection=${process.env.NEXT_PUBLIC_CLIENT_PROJECTION}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/editClient`,
         client
       )
 
@@ -97,7 +102,7 @@ const ClientForm = ({ view, add, edit, id }) => {
               </button>
             </>
             : mode === 'edit'
-            ? <button title={'Cancel Update'}
+            ? <button type={'button'} title={'Cancel Update'}
                       onClick={() => setMode('view')}
                       className={'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'}>
               Cancel

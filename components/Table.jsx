@@ -87,27 +87,31 @@ const Table = ({ columns, data, rowClickEnabled, rowClickBasePath }) => {
             {'>>'}
           </button>
           {' '}
+          <br />
           <span>
-          Page{' '}
-            <strong>
-            {pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
+            <small>
+              Page{' '}
+              <strong>
+                {pageIndex + 1} of {pageOptions.length}
+              </strong>{' '}
+            </small>
+          </span>
         </div>
-        <div className={'flex flex-nowrap'}>
-        <div className={'flex flex-nowrap mr-8'}>
-          <label className={'mr-2'} htmlFor="pagenum">Go to page:</label>
-          <input
-            className={'appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:outline-none focus:bg-white'}
-            type="number"
-            defaultValue={pageIndex + 1}
-            onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              gotoPage(page)
-            }}
-            style={{ width: '100px' }}
-          />
-        </div>{' '}
+        <div className={'flex flex-nowrap h-1/2'}>
+          <div className={'flex flex-nowrap mr-8'}>
+            <label className={'mr-2'} htmlFor="pagenum">Go to page:</label>
+            <input
+              className={'appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-1 px-2 leading-tight focus:outline-none focus:bg-white'}
+              type="number"
+              defaultValue={pageIndex + 1}
+              onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0
+                gotoPage(page)
+              }}
+              style={{ width: '50px' }}
+            />
+          </div>
+          {' '}
           <div className="relative">
             <select
               className={'block w-28 appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-1 px-2 pr-2 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500'}

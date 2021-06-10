@@ -11,15 +11,19 @@ const ContratForm = ({ view, add, edit, id }) => {
   const [categories, setCategories] = useState([])
   const [agencies, setAgencies] = useState([])
   const [clients, setClients] = useState([])
-  // const [contrat, setContrat] = useState({})
 
   const handleDelete = async () => {
-    await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteContrat?id=${id}?projection=${process.env.NEXT_PUBLIC_CONTRAT_PROJECTION}`)
+    await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}/deleteContrat?id=${id}`)
     alert(`Contrat with id ${id} deleted!`)
     await Router.push('/contrats')
   }
 
   useEffect(async () => {
+
+    //  Redirect if invalid id
+    if (mode !== 'add' && !(/\d/g.test(id))) {
+      await Router.push('/contacts')
+    }
 
     if (mode !== 'add') {
       const contratRes = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/contrats/${id}?projection=${process.env.NEXT_PUBLIC_CONTRAT_PROJECTION}`)
@@ -29,7 +33,7 @@ const ContratForm = ({ view, add, edit, id }) => {
       console.log({ contrat })
 
       setValue('matricule', contrat?.matricule)
-      setValue('categorie', mode === 'view' ? contrat?.categorie?.nom : contrat?.categorie?.id)
+      setValue('categorie', mode === 'view' ? contrat?.categorie?.intitule : contrat?.categorie?.id)
       setValue('agence', mode === 'view' ? contrat?.agence?.nom : contrat?.agence?.id)
       setValue('client', mode === 'view'
         ? `${contrat?.client?.cin}: ${contrat?.client?.nom} ${contrat?.client?.prenom}`
@@ -53,15 +57,19 @@ const ContratForm = ({ view, add, edit, id }) => {
 
   const onSubmit = async data => {
     const contract = {
-      ...data
+      ...data,
+      categorie: {id: data.categorie},
+      client: {id: data.client},
+      agence: {id: data.agence}
     }
 
     if (mode === 'add') {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/addContrat?projection=${process.env.NEXT_PUBLIC_CONTRAT_PROJECTION}`, contract)
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/addContrat`, contract)
       await Router.push(`/contrats`)
     } else {
-      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/editContact/${id}?projection=${process.env.NEXT_PUBLIC_CONTRAT_PROJECTION}`, contract)
+      contract.id = id
+      await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/editContrat`, contract)
       setMode('view')
     }
 
@@ -125,7 +133,7 @@ const ContratForm = ({ view, add, edit, id }) => {
                   {
                     categories.map(category => <option key={category.id} id={category.id}
                                                        value={`${category.id}`}>
-                        {category.nom}
+                        {category.intitule}
                       </option>
                     )
                   }
